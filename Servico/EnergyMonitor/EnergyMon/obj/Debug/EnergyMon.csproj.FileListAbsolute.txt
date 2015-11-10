@@ -1,0 +1,16 @@
+C:\Users\807896\Desktop\Arduino Paula\PaginaArduino\Servico\EnergyMonitor\EnergyMon\bin\EnergyMon.dll
+C:\Users\807896\Desktop\Arduino Paula\PaginaArduino\Servico\EnergyMonitor\EnergyMon\bin\EnergyMon.pdb
+C:\Users\807896\Desktop\Arduino Paula\PaginaArduino\Servico\EnergyMonitor\EnergyMon\obj\Debug\EnergyMon.dll
+C:\Users\807896\Desktop\Arduino Paula\PaginaArduino\Servico\EnergyMonitor\EnergyMon\obj\Debug\EnergyMon.pdb
+C:\Users\807896\Desktop\Arduino Paula\PaginaArduino\Servico\EnergyMonitor\EnergyMon\obj\Debug\EnergyMon.csprojResolveAssemblyReference.cache
+C:\Users\paula_000\Desktop\PaginaArduino\Servico\EnergyMonitor\EnergyMon\bin\EnergyMon.dll.config
+C:\Users\paula_000\Desktop\PaginaArduino\Servico\EnergyMonitor\EnergyMon\bin\EnergyMon.dll
+C:\Users\paula_000\Desktop\PaginaArduino\Servico\EnergyMonitor\EnergyMon\bin\EnergyMon.pdb
+C:\Users\paula_000\Desktop\PaginaArduino\Servico\EnergyMonitor\EnergyMon\obj\Debug\EnergyMon.csprojResolveAssemblyReference.cache
+C:\Users\paula_000\Desktop\PaginaArduino\Servico\EnergyMonitor\EnergyMon\obj\Debug\EnergyMon.dll
+C:\Users\paula_000\Desktop\PaginaArduino\Servico\EnergyMonitor\EnergyMon\obj\Debug\EnergyMon.pdb
+C:\Users\807896\Desktop\Projeto EnergyMonitor\Servico\EnergyMonitor\EnergyMon\obj\Debug\EnergyMon.csprojResolveAssemblyReference.cache
+C:\Users\807896\Desktop\Projeto EnergyMonitor\Servico\EnergyMonitor\EnergyMon\obj\Debug\EnergyMon.dll
+C:\Users\807896\Desktop\Projeto EnergyMonitor\Servico\EnergyMonitor\EnergyMon\bin\EnergyMon.dll
+C:\Users\807896\Desktop\Projeto EnergyMonitor\Servico\EnergyMonitor\EnergyMon\bin\EnergyMon.pdb
+C:\Users\807896\Desktop\Projeto EnergyMonitor\Servico\EnergyMonitor\EnergyMon\obj\Debug\EnergyMon.pdb
