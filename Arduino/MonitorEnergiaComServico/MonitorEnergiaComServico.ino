@@ -7,7 +7,7 @@
 // VARIÁVEIS GLOBAIS
 EnergyMonitor emon1;    // Uma instância de um monitor de energial da Emon Library.
 const int CT_PIN = 0;   // Pino onde está conectado o sinal do sensor de corrente.
-
+//TESTE BRANCH
 IPAddress servico(192, 168, 1, 102);
 byte mac[] = { 0x98, 0x4F, 0xEE, 0x00, 0x77, 0xA2 };
 EthernetClient client;
