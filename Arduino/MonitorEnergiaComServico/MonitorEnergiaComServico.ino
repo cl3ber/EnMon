@@ -8,7 +8,7 @@
 EnergyMonitor emon1;    // Uma instância de um monitor de energial da Emon Library.
 const int CT_PIN = 0;   // Pino onde está conectado o sinal do sensor de corrente.
 
-IPAddress servico(192, 168, 1, 100);
+IPAddress servico(192, 168, 1, 102);
 byte mac[] = { 0x98, 0x4F, 0xEE, 0x00, 0x77, 0xA2 };
 EthernetClient client;
 
@@ -42,9 +42,9 @@ void sendData(double Irms, double Potencia, double Consumo, double calc) {
 
   if(client.connected()){
     Serial.println("Conectado");
-    Serial.println("GET HTTP://192.168.1.100/EnMon/EnergyMonitor.svc/Armazenar/" + String(Potencia, 4) + "/" + String(Consumo, 4) + "/" + String(calc, 4));
+    Serial.println("GET HTTP://192.168.1.102/EnMon/EnergyMonitor.svc/Armazenar/" + String(Potencia, 4) + "/" + String(Consumo, 4) + "/" + String(calc, 4));
     client.println("GET /EnMon/EnergyMonitor.svc/Armazenar/" + String(Potencia, 4) + "/" + String(Consumo, 4) + "/" + String(calc, 4) + " HTTP/1.1");
-    client.println("Host: 192.168.1.100"); 
+    client.println("Host: 192.168.1.102"); 
     client.println("Connection: close");
     client.println("User-Agent: Arduino");
     client.println("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
@@ -75,7 +75,7 @@ void loop()
   double Consumo = 0, Irms = 0, Potencia = 0;
   Irms = emon1.calcIrms(1480);  // Mede a corrente RMS.
   Potencia = Irms * 127.0;   // Calcula a potência aparente (supondo que a rede elétrica esteja em 127 V).
-  Consumo = ((Potencia / 1000) * 3600) * 0.43; // Calcula o consumo por kWh
+  Consumo = ((Potencia / 1000) * 60) * 0.00717; // Calcula o consumo por kW por minuto
   Serial.print("Corrente: ");
   Serial.print(Irms);   // Imprime a corrente na serial.
   Serial.print(" A \t");

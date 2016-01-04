@@ -16,13 +16,15 @@ namespace EnergyMon
         void Armazenar(string potencia, string consumo, string valor);
 
         [OperationContract]
-        List<DadosEnergyMonitor> ConsultarDados();
+        List<DadosEnergyMonitor> ConsultarDadosPorDia();
+        [OperationContract]
+        List<DadosEnergyMonitor> ConsultarDadosUlitmaHora();
     }
 
     public class DadosEnergyMonitor
     {
-        public string Data { get; set; }
         public double Potencia { get; set; }
+        public DateTime Data { get; set; }
         public double Consumo { get; set; }
         public double Valor { get; set; }
     }
