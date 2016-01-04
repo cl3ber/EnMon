@@ -1,0 +1,238 @@
+﻿<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Medidor de Consumo de Energia - FATEC ITAQUERA</title>
+    <link href="Scripts/chartist.min.css" rel="stylesheet" />
+    <link href="Scripts/main.css" rel="stylesheet" />
+    <script type="text/javascript" src="Scripts/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="Scripts/moment.js"></script>
+    <script type="text/javascript" src="Scripts/chartist.min.js"></script>
+    <script type="text/javascript" src="Scripts/chartist-plugin-axistitle.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $.ajax({
+                //Tirar o comentário abaixo quando publicar no IIS
+                //url: 'http://localhost/EnMon/EnergyMonitor.svc/BuscarDadosUltimaHora',
+                //Comentar quando publicar no IIS
+                url: 'http://localhost:49666/EnergyMonitor.svc/BuscarDadosUltimaHora',
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    var MatrizData = new Array();
+                    var MatrizValor = new Array();
+                    var MatrizConsumo = new Array();
+                    var MatrizPotencia = new Array();
+
+                    if (data.length == 0) {
+                        return;
+                    }
+
+                    for (var i = 0; i < 20; i++) {
+                        var item = data[i];
+                        MatrizData[i] = item["Data"];
+                        MatrizConsumo[i] = parseFloat(item["Consumo"]).toFixed(1);
+                        MatrizPotencia[i] = parseFloat(item["Potencia"]).toFixed(1);
+                        MatrizValor[i] = parseFloat(item["Valor"]).toFixed(1);
+                    }
+
+                    var chart = new Chartist.Line('.ct-chart', {
+                        labels: MatrizData,
+                        series: [{name:"Consumo (R$)", data: MatrizConsumo}, {name:"Potência (W)", data:MatrizPotencia}]
+                    }, {
+                        axisX: {
+                            labelInterpolationFnc: function (value) {
+                                return moment(value).format('MMM D HH:mm:ss');
+                            }
+                        },
+                        showArea: true,
+                        fullWidth: true,
+                        plugins: [
+                          Chartist.plugins.ctAxisTitle({
+                              axisX: {
+                                  axisTitle: 'Data Extração (Mês, dia, horas e minutos)',
+                                  axisClass: 'ct-axis-title',
+                                  offset: {
+                                      x: 0,
+                                      y: 0
+                                  },
+                                  textAnchor: 'middle'
+                              },
+                              axisY: {
+                                  axisTitle: 'Consumo (R$) e Potência (W)',
+                                  axisClass: 'ct-axis-title',
+                                  labelInterpolationFnc: function(value) {
+                                      return Math.round(value * 100) / 100;
+                                  },
+                                  offset: {
+                                      x: 0,
+                                      y: 0
+                                  },
+                                  textAnchor: 'middle',
+                                  flipTitle: false
+                              }
+                          })
+                        ]
+                    });
+
+                    chart.on('draw', function (data) {
+                        if (data.type === 'line' || data.type === 'area') {
+                            data.element.animate({
+                                d: {
+                                    begin: 2000 * data.index,
+                                    dur: 2000,
+                                    from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                                    to: data.path.clone().stringify(),
+                                    easing: Chartist.Svg.Easing.easeOutQuint
+                                }
+                            });
+                        }
+                    });
+                },
+                error: function (jqxhr, textStatus, error) {
+                    var err = textStatus + ", " + error;
+                    console.log("Request Failed: " + err + " | status:" + textStatus + " | xhr" + jqxhr)
+                }
+            });
+
+            $.ajax({
+                //Tirar o comentário abaixo quando publicar no IIS
+                url: 'http://localhost/EnMon/EnergyMonitor.svc/BuscarDadosPorDia',
+                //Comentar quando publicar no IIS
+                //url: 'http://localhost:49666/EnergyMonitor.svc/BuscarDadosPorDia',
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    var MatrizData = new Array();
+                    var MatrizValor = new Array();
+                    var MatrizConsumo = new Array();
+                    var MatrizPotencia = new Array();
+
+                    if (data.length == 0) {
+                        return;
+                    }
+
+                    for (var i = 0; i < data.length; i++) {
+                        var item = data[i];
+                        MatrizData[i] = item["Data"];
+                        MatrizConsumo[i] = parseFloat(item["Consumo"]).toFixed(1);
+                        MatrizPotencia[i] = parseFloat(item["Potencia"]).toFixed(1);
+                        MatrizValor[i] = parseFloat(item["Valor"]).toFixed(1);
+                    }
+
+                    var chart = new Chartist.Bar('.ct-chart-bars', {
+                        labels: MatrizData,
+                        series: [
+                            {
+                                name: "Consumo (R$)",
+                                data: MatrizConsumo
+                            }, 
+                            {
+                                name: "Potencia (W)",
+                                data: MatrizPotencia
+                            }
+                        ]
+                    }, {
+                        reverseData: true,
+                        horizontalBars: true,
+                        fullWidth: true,
+                        axisY: {
+                            labelInterpolationFnc: function (value) {
+                                return moment(value).format('MMM D');
+                            }
+
+                        },
+                        axisX: {
+                            type: Chartist.STEPAXIS,
+                            offset: 70
+                        },
+                        plugins: [
+                          Chartist.plugins.ctAxisTitle({
+                              axisX: {
+                                  axisTitle: 'Consumo (R$) e Potência (W)',
+                                  axisClass: 'ct-axis-title',
+                                  offset: {
+                                      x: 0,
+                                      y: 0
+                                  },
+                                  textAnchor: 'middle'
+                              },
+                              axisY: {
+                                  axisTitle: 'Dia',
+                                  axisClass: 'ct-axis-title',
+                                  labelInterpolationFnc: function (value) {
+                                      return Math.round(value * 100) / 100;
+                                  },
+                                  offset: {
+                                      x: 0,
+                                      y: 0
+                                  },
+                                  textAnchor: 'middle',
+                                  flipTitle: false
+                              }
+                          })
+                        ]
+                    });
+
+                    chart.on('draw', function (data) {
+                        if (data.type === 'line' || data.type === 'area') {
+                            data.element.animate({
+                                d: {
+                                    begin: 2000 * data.index,
+                                    dur: 2000,
+                                    from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                                    to: data.path.clone().stringify(),
+                                    easing: Chartist.Svg.Easing.easeOutQuint
+                                }
+                            });
+                        }
+                    });
+                },
+                error: function (jqxhr, textStatus, error) {
+                    var err = textStatus + ", " + error;
+                    console.log("Request Failed: " + err + " | status:" + textStatus + " | xhr" + jqxhr)
+                }
+            });
+
+            var $chart = $('.ct-chart');
+
+            var $toolTip = $chart
+              .append('<div class="tooltip"></div>')
+              .find('.tooltip')
+              .hide();
+
+            $chart.on('mouseenter', '.ct-point', function () {
+                var $point = $(this),
+                  value = $point.attr('ct:value'),
+                  seriesName = $point.parent().attr('ct:series-name');
+                $toolTip.html(seriesName + '<br>' + value).show();
+            });
+
+            $chart.on('mouseleave', '.ct-point', function () {
+                $toolTip.hide();
+            });
+
+            $chart.on('mousemove', function (event) {
+                $toolTip.css({
+                    left: (event.offsetX || event.originalEvent.layerX) - $toolTip.width() / 2 - 10,
+                    top: (event.offsetY || event.originalEvent.layerY) - $toolTip.height() - 40
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <span style="font-weight:bolder; font-size:20px;">Consumo e Potência da última hora.</span>
+        <br />
+        <div class="ct-chart ct-golden-section"></div>
+    </div>
+    <br />
+    <div>
+        <span style="font-weight:bolder; font-size:20px; width:50%">Consumo, Potência e valores diários.</span>
+        <br />
+        <div class="ct-chart-bars ct-golden-section"></div>
+    </div>
+
+    <div class="tooltip" style="display:none;"></div>
+</body>
+</html>

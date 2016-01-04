@@ -66,8 +66,13 @@
     <Content Include="EnergyMonitor.svc" />
     <Content Include="Global.asax" />
     <Content Include="Pagina\MonitorEnergia.html" />
-    <Content Include="Pagina\Scripts\highcharts.js" />
+    <Content Include="Pagina\PaginaEnMon.html" />
+    <Content Include="Pagina\Scripts\chartist-plugin-axistitle.min.js" />
+    <Content Include="Pagina\Scripts\chartist.min.css" />
+    <Content Include="Pagina\Scripts\chartist.min.js" />
     <Content Include="Pagina\Scripts\jquery-2.1.4.min.js" />
+    <Content Include="Pagina\Scripts\main.css" />
+    <Content Include="Pagina\Scripts\moment.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -86,6 +91,7 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Pagina\Scripts\chartist.min.js.map" />
     <None Include="Properties\PublishProfiles\EnergyMonitor.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

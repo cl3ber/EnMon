@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -44,8 +45,8 @@ namespace EnergyMon
         }
         [WebInvoke(Method = "GET",
                    ResponseFormat = WebMessageFormat.Json,
-                   UriTemplate = "BuscarDados")]
-        public List<DadosEnergyMonitor> ConsultarDados()
+           UriTemplate = "BuscarDadosPorDia")]
+        public List<DadosEnergyMonitor> ConsultarDadosPorDia()
         {
             var dados = new List<DadosEnergyMonitor>();
             if (!File.Exists(caminhoArquivo))
@@ -63,46 +64,60 @@ namespace EnergyMon
                         var dadosArquivo = linha.Split('|');
                         dados.Add(new DadosEnergyMonitor()
                         {
-                            Data = dadosArquivo[0],
-                            Potencia = Convert.ToDouble(dadosArquivo[1]),
-                            Consumo = Convert.ToDouble(dadosArquivo[2]),
-                            Valor = Convert.ToDouble(dadosArquivo[3])
+                            Data = Convert.ToDateTime(dadosArquivo[0]),
+                            Potencia = Convert.ToDouble(dadosArquivo[1], CultureInfo.InvariantCulture),
+                            Consumo = Convert.ToDouble(dadosArquivo[2], CultureInfo.InvariantCulture),
+                            Valor = Convert.ToDouble(dadosArquivo[3], CultureInfo.InvariantCulture)
                         });
                     }
                 }
             }
 
-            var ListaTratada = new List<DadosEnergyMonitor>();
-            var DataFim = DateTime.MinValue;
-            DadosEnergyMonitor dadosProvisorio = null;
-
-            dados.OrderBy(d => d.Data).ToList().ForEach(d =>
+            var retorno = (from linha in dados
+                         group linha by new { Data = linha.Data.Date } into g
+                         select new DadosEnergyMonitor()
+                         {
+                             Data = g.Key.Data,
+                             Potencia = g.Sum(dado => dado.Potencia),
+                             Consumo = g.Sum(dado => dado.Consumo),
+                             Valor = g.Sum(dado => dado.Valor)
+                         }).ToList();
+            return retorno;
+        }
+        [WebInvoke(Method = "GET",
+                   ResponseFormat = WebMessageFormat.Json,
+                   UriTemplate = "BuscarDadosUltimaHora")]
+        public List<DadosEnergyMonitor> ConsultarDadosUlitmaHora()
+        {
+            var dados = new List<DadosEnergyMonitor>();
+            if (!File.Exists(caminhoArquivo))
+                return dados;
+            using (FileStream arquivo = new FileStream(caminhoArquivo, FileMode.Open, FileAccess.Read))
+            {
+                using (StreamReader leitor = new StreamReader(arquivo))
                 {
-                    if (DataFim < Convert.ToDateTime(d.Data) || DataFim == DateTime.MinValue)
+                    while (!leitor.EndOfStream)
                     {
-                        DataFim = Convert.ToDateTime(d.Data).AddHours(1);
-                        if (dadosProvisorio == null)
-                            dadosProvisorio = new DadosEnergyMonitor();
-                        else
+                        string linha = leitor.ReadLine();
+                        var dadosArquivo = linha.Split('|');
+                        dados.Add(new DadosEnergyMonitor()
                         {
-                            ListaTratada.Add(dadosProvisorio);
-                            dadosProvisorio = new DadosEnergyMonitor();
+                            Data = Convert.ToDateTime(dadosArquivo[0]),
+                            Potencia = Convert.ToDouble(dadosArquivo[1], CultureInfo.InvariantCulture),
+                            Consumo = Convert.ToDouble(dadosArquivo[2], CultureInfo.InvariantCulture),
+                            Valor = Convert.ToDouble(dadosArquivo[3], CultureInfo.InvariantCulture)
+                        }); 
                         }
 
-                        dadosProvisorio.Data = d.Data;
                     }
 
-                    dadosProvisorio.Consumo += d.Consumo;
-                    dadosProvisorio.Potencia += d.Potencia;
-                    dadosProvisorio.Valor += d.Valor;
 
-                });
+            }
 
-            if (dadosProvisorio != null)
-                ListaTratada.Add(dadosProvisorio);
+            var dataFinal = dados.Max(d => d.Data);
             
 
-            return ListaTratada.OrderBy(d => d.Data).ToList();
+            return dados.OrderBy(d => d.Data).Where(d => d.Data >= dataFinal.AddHours(-1) && d.Data <= dataFinal).ToList();
         }
     }
 }
